@@ -1,6 +1,16 @@
 name: Publication to MavenCentral
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      stableVersion:
+        required: true
+        type: string
+        description: 'Stable version'
+      snapshotVersion:
+        required: true
+        type: string
+        description: 'Snapshot version'
 
 jobs:
   publication:
@@ -26,7 +36,8 @@ jobs:
           PGP_KEYID: ${{ secrets.pgp_keyid }}
           PGP_KEY: ${{ secrets.pgp_key }}
           PGP_PASSWORD: ${{ secrets.pgp_password }}
-          CLOSE_STAGING_REPOSITORY: ${{ github.event.inputs.closeStaging }}
+          STABLE_VERSION: ${{ github.event.inputs.stableVersion }}
+          SNAPSHOT_VERSION: ${{ github.event.inputs.snapshotVersion }}
         run: |
           mkdir -p $HOME/.gradle
           touch $HOME/.gradle/gradle.properties
@@ -35,6 +46,10 @@ jobs:
           echo $'\n'kaspresso.ossrh.stagingProfileId=$OSSRH_STAGING_PROFILE_ID >> $HOME/.gradle/gradle.properties
           echo $'\n'kaspresso.pgp.keyid=$PGP_KEYID >> $HOME/.gradle/gradle.properties
           echo $'\n'kaspresso.pgp.key=$PGP_KEY >> $HOME/.gradle/gradle.properties
+          echo $'\n'stableVersion=$PGP_PASSWORD >> $HOME/.gradle/gradle.properties
           echo $'\n'kaspresso.pgp.password=$PGP_PASSWORD >> $HOME/.gradle/gradle.properties
+          echo $'\n'stableVersion=$STABLE_VERSION >> $HOME/.gradle/gradle.properties
+          echo $'\n'snapshotVersion=$SNAPSHOT_VERSION-SNAPSHOT >> $HOME/.gradle/gradle.properties
       - name: Publish
-        run: ./gradlew publishRelease
+        run: cat $HOME/.gradle/gradle.properties
+#        run: ./gradlew publishRelease
