@@ -51,5 +51,4 @@ jobs:
           echo $'\n'stableVersion=$STABLE_VERSION >> $HOME/.gradle/gradle.properties
           echo $'\n'snapshotVersion=$SNAPSHOT_VERSION-SNAPSHOT >> $HOME/.gradle/gradle.properties
       - name: Publish
-        run: cat $HOME/.gradle/gradle.properties
-#        run: ./gradlew publishRelease
+        run: ./gradlew publishRelease
